@@ -5,7 +5,7 @@ import net.runelite.api.Client;
 import net.runelite.api.Point;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.api.widgets.ComponentID;
 import net.runelite.client.ui.overlay.*;
 import net.runelite.client.ui.overlay.worldmap.WorldMapOverlay;
 
@@ -58,7 +58,7 @@ public class DeadmanMultiZonesWorldMapOverlay extends Overlay
     public Dimension render(Graphics2D graphics)
     {
         Widget worldMap =
-            client.getWidget(WidgetInfo.WORLD_MAP_VIEW);
+            client.getWidget(ComponentID.WORLD_MAP_MAPVIEW);
 
         if (worldMap == null || worldMap.isHidden())
         {
