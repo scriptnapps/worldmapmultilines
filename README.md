@@ -1,2 +1,2 @@
-# Example
-An example greeter plugin
+# WorldMapMultiLines
+An WorldMap MultiLine plugin
